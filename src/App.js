@@ -1,23 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import NetworkSelector from "./components/NetworkSelector";
+import ImageUploader from "./components/ImageUploader";
+import MintButton from "./components/MintButton";
 
 function App() {
+  const [network, setNetwork] = useState("ethereum");
+  const [cid, setCID] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "20px" }}>
+      <h1>Mint NFTs on Multiple Networks</h1>
+      <NetworkSelector network={network} setNetwork={setNetwork} />
+      <ImageUploader setCID={setCID} />
+      <MintButton network={network} cid={cid} />
     </div>
   );
 }

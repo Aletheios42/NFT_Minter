@@ -2,6 +2,7 @@ import React from "react";
 
 const NetworkSelector = ({ network, setNetwork }) => {
   const networks = [
+    { name: "Sepolia", value: "sepolia" },
     { name: "Ethereum", value: "ethereum" },
     { name: "Avalanche", value: "avalanche" },
   ];

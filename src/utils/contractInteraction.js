@@ -1,34 +1,35 @@
-import { ethers } from "ethers";
+import { ethers } from "ethers"; // Asegúrate de que ethers esté bien importado
+import { contractABI } from "./contractConfig"; // Cambié esta importación para que sea una importación con nombre
 
-const contractAddresses = {
-  ethereum: "0xYourEthereumContractAddress",
-  avalanche: "0xYourAvalancheContractAddress",
-};
+const contractAddress = "0x00a87ff735d348a8db86c9cb19faed9f45b1983c"; // Dirección del contrato
 
-const abi = [
-  // Add the ABI of your contract here
-];
+let provider;
+let signer;
+let contract;
 
-export const mintNFT = async (network, cid) => {
+export const initializeContract = async () => {
   try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      network === "ethereum"
-        ? "https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY"
-        : "https://api.avax-test.network/ext/bc/C/rpc",
-    );
+    if (typeof window.ethereum === "undefined") {
+      console.error("MetaMask no está instalado");
+      return;
+    }
 
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      contractAddresses[network],
-      abi,
-      signer,
-    );
+    provider = new ethers.JsonRpcProvider(window.ethereum); // Cambié Web3Provider por JsonRpcProvider
+    await window.ethereum.request({ method: "eth_requestAccounts" });
 
-    const tx = await contract.mint(signer.getAddress(), `ipfs://${cid}`);
-    await tx.wait();
-    console.log("Transaction confirmed:", tx);
+    signer = provider.getSigner();
+    const address = await signer.getAddress();
+    if (!address) {
+      console.error("No se encontró ninguna cuenta activa en MetaMask.");
+      return;
+    }
+
+    // Inicializa el contrato
+    contract = new ethers.Contract(contractAddress, contractABI, signer);
+    console.log("Contrato inicializado correctamente.");
+
+    return contract;
   } catch (error) {
-    console.error("Error minting NFT:", error);
-    throw error;
+    console.error("Error al inicializar el contrato:", error);
   }
 };
